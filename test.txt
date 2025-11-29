@@ -9,38 +9,6 @@
           }
         ]
       },
-    "proxy": [
-        {
-            "url": "socks5://tusername:password@proxy.example.com:38769",
-            "description": "代理服务器1",
-            "protocol": "s5"
-        },
-        {
-            "url": "socks5://tusername:password@proxy.example.com:38769",
-            "description": "备用代理服务器",
-            "protocol": "s5"
-        }
-    ],
-    "ws": [
-        {
-            "url": "wss://ws.example.com/ws/",
-            "description": "WebSocket服务器1"
-        },
-        {
-            "url": "wss://ws01.example.com/ws/",
-            "description": "备用ws服务器"
-        }
-    ],
-    "update": [
-        {
-            "url": "https://update.example.com",
-            "description": "更新服务器1"
-        },
-        {
-            "url": "https://update01.example.com",
-            "description": "备用更新服务器"
-        }
-    ],
     "onlineSupport": [
         {
             "url": "https://chat.example.com",
@@ -48,81 +16,5 @@
             "apiBaseUrl": "https://chat.example.com",
             "wsBaseUrl": "wss://chat.example.com"
         }
-    ],
-    "subscription": {
-        "urls": [
-            {
-                "url": "https://www.example-sub1.com",
-                "description": "reverse",
-                "endpoints": {
-                    "v2": {
-                        "path": "/api/v2/subscription-encrypt/{token}",
-                        "requiresToken": true,
-                        "method": "GET",
-                        "description": "V2 加密订阅接口，token在路径中"
-                    }
-                }
-            },
-            {
-                "url": "https://www.example-sub1.com/v2",
-                "description": "01",
-                "endpoints": {
-                    "v2": {
-                        "path": "/api/v2/subscription-encrypt/{token}",
-                        "requiresToken": true,
-                        "method": "GET",
-                        "description": "V2 加密订阅接口，token在路径中"
-                    }
-                }
-            },
-            {
-                "url": "https://api.example-origin.com",
-                "description": "origin",
-                "endpoints": {
-                    "v2": {
-                        "path": "/api/v2/subscription-encrypt/{token}",
-                        "requiresToken": true,
-                        "method": "GET",
-                        "description": "V2 加密订阅接口，token在路径中"
-                    }
-                }
-            },
-            {
-                "url": "http://xxx.xxx.xxx.3:7880",
-                "description": "服务器3-ecs",
-                "endpoints": {
-                    "v2": {
-                        "path": "/api/v2/subscription-encrypt/{token}",
-                        "requiresToken": true,
-                        "method": "GET",
-                        "description": "V2 加密订阅接口，token在路径中"
-                    }
-                }
-            },
-            {
-                "url": "http://xxx.xxx.xxx.2:7881",
-                "description": "服务器2-ecs",
-                "endpoints": {
-                    "v2": {
-                        "path": "/api/v2/subscription-encrypt/{token}",
-                        "requiresToken": true,
-                        "method": "GET",
-                        "description": "V2 加密订阅接口，token在路径中"
-                    }
-                }
-            },
-            {
-                "url": "http://xxx.xxx.xxx.1:7880",
-                "description": "服务器1-应用",
-                "endpoints": {
-                    "v2": {
-                        "path": "/api/v2/subscription-encrypt/{token}",
-                        "requiresToken": true,
-                        "method": "GET",
-                        "description": "V2 加密订阅接口，token在路径中"
-                    }
-                }
-            }
-        ]
-    }
+    ]
 }
