@@ -1,20 +1,20 @@
 {
-    "_comment": "面板类型：xboard 或 v2board。切换此字段即可切换不同面板实现，无需修改代码 v2board 目前正在建设中",
-    "panelType": "xboard",
-    "panels": {
-        "mihomo": [
-          {
-            "url": "https://lty.xn--i8s502dj8cu1l.xn--55qx5d",
-            "description": "番茄种子"
-          }
-        ]
-      },
-    "onlineSupport": [
-        {
-            "url": "https://chat.example.com",
-            "description": "在线客服API服务",
-            "apiBaseUrl": "https://chat.example.com",
-            "wsBaseUrl": "wss://chat.example.com"
-        }
+  "_comment": "面板类型：xboard 或 v2board。切换此字段即可切换不同面板实现，无需修改代码 v2board 目前正在建设中",
+  "panelType": "xboard",
+  "panels": {
+    "mihomo": [
+      {
+        "url": "https://lty.xn--i8s502dj8cu1l.xn--55qx5d",
+        "description": "番茄种子"
+      }
     ]
+  },
+  "onlineSupport": [
+    {
+      "url": "https://chat.example.com",
+      "description": "在线客服API服务",
+      "apiBaseUrl": "https://chat.example.com",
+      "wsBaseUrl": "wss://chat.example.com"
+    }
+  ]
 }
