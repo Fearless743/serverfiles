@@ -4,7 +4,7 @@
   "panels": {
     "mihomo": [
       {
-        "url": "https://lty.xn--i8s502dj8cu1l.xn--55qx5d",
+        "url": "https://lty.csgozbt.com/",
         "description": "番茄种子"
       }
     ]
