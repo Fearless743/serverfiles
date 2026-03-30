@@ -14,20 +14,25 @@ PLAIN='\033[0m'
 # 检查权限
 [[ $EUID -ne 0 ]] && echo -e "${RED}错误：${PLAIN} 必须使用 root 运行！" && exit 1
 
-# 辅助函数：确保先显示列表，再请求 ID
+# 辅助函数：强制先显示列表到屏幕，再请求 ID 并返回给变量
 get_node_id_with_list() {
     local action_name=$1
-    clear
-    echo -e "${BLUE}==========================================${PLAIN}"
-    echo -e "${YELLOW}正在执行操作：${action_name}${PLAIN}"
-    echo -e "${BLUE}------------------------------------------${PLAIN}"
+    clear > /dev/tty
+    # 强制将装饰线和列表输出到终端控制台，而不是返回给赋值变量
+    echo -e "${BLUE}==========================================${PLAIN}" > /dev/tty
+    echo -e "${YELLOW}正在执行操作：${action_name}${PLAIN}" > /dev/tty
+    echo -e "${BLUE}------------------------------------------${PLAIN}" > /dev/tty
     
-    # 显式先执行 list 命令，确保输出立即刷新到终端
-    bash <(curl -Ls ${REMOTE_SCRIPT}) list
+    # 执行在线列表命令，同样导向终端
+    bash <(curl -Ls ${REMOTE_SCRIPT}) list > /dev/tty
     
-    echo -e "${BLUE}------------------------------------------${PLAIN}"
-    echo -e "${GREEN}请从上方列表中选择 ID${PLAIN}"
-    read -p "请输入节点 ID (直接回车取消): " nid
+    echo -e "${BLUE}------------------------------------------${PLAIN}" > /dev/tty
+    echo -e "${GREEN}请根据上方列表输入正确的 Node ID${PLAIN}" > /dev/tty
+    
+    # 读取输入
+    read -p "请输入节点 ID (直接回车取消): " nid < /dev/tty
+    
+    # 唯独这一行输出会返回给赋值变量 nid
     echo "$nid"
 }
 
@@ -62,28 +67,28 @@ show_menu() {
             read -p "按回车继续..." ;;
         3) 
             nid=$(get_node_id_with_list "启动节点")
-            if [ -n "$nid" ]; then
+            if [[ -n "$nid" && "$nid" =~ ^[0-9]+$ ]]; then
                 systemctl start xboard-node@$nid
                 echo -e "${GREEN}节点 $nid 启动指令已发送${PLAIN}"
                 sleep 1.5
             fi ;;
         4) 
             nid=$(get_node_id_with_list "停止节点")
-            if [ -n "$nid" ]; then
+            if [[ -n "$nid" && "$nid" =~ ^[0-9]+$ ]]; then
                 systemctl stop xboard-node@$nid
                 echo -e "${RED}节点 $nid 已停止${PLAIN}"
                 sleep 1.5
             fi ;;
         5) 
             nid=$(get_node_id_with_list "重启节点")
-            if [ -n "$nid" ]; then
+            if [[ -n "$nid" && "$nid" =~ ^[0-9]+$ ]]; then
                 systemctl restart xboard-node@$nid
                 echo -e "${GREEN}节点 $nid 重启完成${PLAIN}"
                 sleep 1.5
             fi ;;
         6)
             nid=$(get_node_id_with_list "查看日志")
-            if [ -n "$nid" ]; then
+            if [[ -n "$nid" && "$nid" =~ ^[0-9]+$ ]]; then
                 echo -e "${BLUE}提示：按 Ctrl+C 退出日志查看${PLAIN}"
                 journalctl -u xboard-node@$nid -f
             fi ;;
@@ -92,7 +97,7 @@ show_menu() {
             read -p "按回车继续..." ;;
         8)
             nid=$(get_node_id_with_list "删除节点")
-            if [ -n "$nid" ]; then
+            if [[ -n "$nid" && "$nid" =~ ^[0-9]+$ ]]; then
                 bash <(curl -Ls ${REMOTE_SCRIPT}) remove "$nid"
                 read -p "按回车继续..."
             fi ;;
@@ -109,9 +114,8 @@ show_menu() {
 show_menu
 EOF
 
-# 设置权限
+# 赋予权限并创建软链接
 chmod +x /usr/local/bin/xboard
-# 重新建立软链接
 ln -sf /usr/local/bin/xboard /usr/local/bin/xb
 
-echo -e "\033[32m[修复完成] 列表显示逻辑已增强。输入 'xb' 测试一下吧！\033[0m"
+echo -e "\033[32m[核心修复完成] 现在输入 'xb'，点击 5，你会发现列表先出，然后再请你输 ID 了！\033[0m"
