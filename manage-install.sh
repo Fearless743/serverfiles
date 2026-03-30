@@ -1,4 +1,3 @@
-# 1. 将管理脚本写入 /usr/local/bin/xboard
 cat > /usr/local/bin/xboard << 'EOF'
 #!/bin/bash
 
@@ -15,12 +14,17 @@ PLAIN='\033[0m'
 # 检查权限
 [[ $EUID -ne 0 ]] && echo -e "${RED}错误：${PLAIN} 必须使用 root 运行！" && exit 1
 
-# 辅助函数：显示列表并提示输入 ID
-get_node_id() {
-    echo -e "${BLUE}--- 当前节点列表 ---${PLAIN}"
+# 辅助函数：显示列表并请求 ID
+get_node_id_with_list() {
+    local action_name=$1
+    clear
+    echo -e "${BLUE}==========================================${PLAIN}"
+    echo -e "${YELLOW}正在执行操作：${action_name}${PLAIN}"
+    echo -e "${BLUE}------------------------------------------${PLAIN}"
+    # 调用远程脚本列出节点
     bash <(curl -Ls $REMOTE_SCRIPT) list
-    echo -e "${BLUE}--------------------${PLAIN}"
-    read -p "请输入节点 ID (直接回车取消): " nid
+    echo -e "${BLUE}------------------------------------------${PLAIN}"
+    read -p "请输入要操作的 节点 ID (直接回车取消): " nid
     echo "$nid"
 }
 
@@ -46,34 +50,35 @@ show_menu() {
 
     case $choice in
         1) 
+            clear
             bash <(curl -Ls $REMOTE_SCRIPT) list
             read -p "按回车继续..." ;;
         2) 
             bash <(curl -Ls $REMOTE_SCRIPT)
             read -p "按回车继续..." ;;
         3) 
-            nid=$(get_node_id)
+            nid=$(get_node_id_with_list "启动节点")
             if [ -n "$nid" ]; then
                 systemctl start xboard-node@$nid
                 echo -e "${GREEN}节点 $nid 启动指令已发送${PLAIN}"
                 sleep 1
             fi ;;
         4) 
-            nid=$(get_node_id)
+            nid=$(get_node_id_with_list "停止节点")
             if [ -n "$nid" ]; then
                 systemctl stop xboard-node@$nid
                 echo -e "${RED}节点 $nid 已停止${PLAIN}"
                 sleep 1
             fi ;;
         5) 
-            nid=$(get_node_id)
+            nid=$(get_node_id_with_list "重启节点")
             if [ -n "$nid" ]; then
                 systemctl restart xboard-node@$nid
                 echo -e "${GREEN}节点 $nid 重启完成${PLAIN}"
                 sleep 1
             fi ;;
         6)
-            nid=$(get_node_id)
+            nid=$(get_node_id_with_list "查看日志")
             if [ -n "$nid" ]; then
                 echo -e "${BLUE}提示：按 Ctrl+C 退出日志查看${PLAIN}"
                 journalctl -u xboard-node@$nid -f
@@ -82,7 +87,7 @@ show_menu() {
             bash <(curl -Ls $REMOTE_SCRIPT) update
             read -p "按回车继续..." ;;
         8)
-            nid=$(get_node_id)
+            nid=$(get_node_id_with_list "删除节点")
             if [ -n "$nid" ]; then
                 bash <(curl -Ls $REMOTE_SCRIPT) remove "$nid"
                 read -p "按回车继续..."
@@ -100,11 +105,11 @@ show_menu() {
 show_menu
 EOF
 
-# 2. 赋予执行权限
+# 设置权限
 chmod +x /usr/local/bin/xboard
 
-# 3. 创建 xboard 软链接指向 xb
+# 创建软链接 (如果 xb 已存在则覆盖)
 ln -sf /usr/local/bin/xboard /usr/local/bin/xb
 
-echo -e "\033[32m[完成] 全局命令已部署！\033[0m"
-echo -e "\033[33m现在输入 \033[1;36mxb\033[0m\033[33m 或 \033[1;36mxboard\033[0m\033[33m 均可进入管理菜单。\033[0m"
+echo -e "\033[32m[配置完成] 主文件已设为 'xboard'，软链接已设为 'xb'。\033[0m"
+echo -e "\033[33m现在输入 \033[1;36mxboard\033[0m\033[33m 或 \033[1;36mxb\033[0m\033[33m 均可进入管理菜单。\033[0m"
