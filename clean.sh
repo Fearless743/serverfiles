@@ -56,13 +56,16 @@ fi
 rm -rf /tmp/*
 rm -rf /var/tmp/*
 
+rm -rf /var/cache/apt/*
+rm -rf /var/lib/apt/lists/*
+
 echo "深度清理完成！"
 df -h /
 EOF
 
 # 3. 权限与 Cron 配置
 sudo chmod +x /usr/local/bin/clean_system.sh
-
+sudo bash /usr/local/bin/clean_system.sh
 # 写入 crontab
 (sudo crontab -l 2>/dev/null | grep -Fv "/usr/local/bin/clean_system.sh"; echo "0 3 * * 0 /usr/local/bin/clean_system.sh > /dev/null 2>&1") | sudo crontab -
 
